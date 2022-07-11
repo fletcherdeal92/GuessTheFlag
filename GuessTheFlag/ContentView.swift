@@ -8,19 +8,11 @@
 import SwiftUI
 
 struct ContentView: View {
+    @State private var showingAlert = false
+    
     var body: some View {
-        ZStack {
-            VStack(spacing: 0) {
-                AngularGradient(gradient: Gradient(colors: [.red, .yellow, .green, .blue, .purple, .red]), center: .center)
-            }
-            
-            Text("Your content")
-                .foregroundStyle(.secondary)
-                .padding(50)
-                .background(.ultraThinMaterial)
-        }
-        .ignoresSafeArea()
-        
+        Text("Hello, world!")
+            .padding()
     }
 }
 
