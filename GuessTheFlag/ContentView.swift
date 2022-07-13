@@ -5,7 +5,6 @@
 //  Created by Fletcher Deal on 7/10/22.
 //
 
-//TODO: Add scoring mechanics
 //TODO: Tell players when they have the wrong flag
 //TODO: Make game last only 8 rounds with a final score and restart
 
@@ -20,6 +19,9 @@ struct ContentView: View {
     @State private var correctAnswer = Int.random(in: 0...2)
     
     @State private var score = 0
+    @State private var scoreMessage = ""
+    
+    @State private var roundCheck = 1
     
     var body: some View {
         ZStack {
@@ -74,24 +76,44 @@ struct ContentView: View {
             .padding()
         }
         .alert(scoreTitle, isPresented: $showingScore) {
-            Button("Continue", action: askQuestion)
+            if roundCheck <= 8 {
+                Button("Continue", action: askQuestion)
+            } else {
+                Button("Restart", action: restartGame)
+            }
+            
         } message: {
-            Text("Your score is \(score)")
+            Text("Your score is \(score) of 8 in round \(roundCheck - 1) \n \(scoreMessage)")
         }
         
     }
     
     func flagTapped(_ number: Int) {
-        if number == correctAnswer {
-            scoreTitle = "Correct"
-            score += 1
+        if roundCheck <= 8 {
+            if number == correctAnswer {
+                scoreTitle = "Correct"
+                scoreMessage = "Congratulations you picked the correct flag"
+                score += 1
+                roundCheck += 1
+            } else {
+                scoreTitle = "Wrong"
+                scoreMessage = "You picked the flag for \(countries[number])"
+                
+                roundCheck += 1
+                
+                if score > 0 {
+                    score -= 1
+                }
+            }
         } else {
-            scoreTitle = "Wrong"
-            
-            if score > 0 {
-                score -= 1
+            scoreTitle = "Game Over"
+            if score == roundCheck {
+                scoreMessage = "Congratulations you got all the questions correct"
+            } else {
+                scoreMessage = "You got \(score) out of \(roundCheck) correct"
             }
         }
+        
         
         showingScore = true
     }
@@ -99,7 +121,13 @@ struct ContentView: View {
     func askQuestion() {
         countries.shuffle()
         correctAnswer = Int.random(in: 0...2)
-        
+    }
+    
+    func restartGame() {
+        countries.shuffle()
+        correctAnswer = Int.random(in: 0...2)
+        score = 0
+        roundCheck = 1
     }
 }
 
